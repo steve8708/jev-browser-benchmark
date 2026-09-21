@@ -4,7 +4,18 @@ Run date: 2026-09-21
 
 The ranking rule is simple: sort by success rate first, then by estimated cost per successful task. Timing is shown separately so a fast failure does not look like a good result.
 
-## Overall snapshot
+## Overall aggregate
+
+| Rank | System | Successes | Rate | Average time | Estimated cost per success |
+| ---: | --- | ---: | ---: | ---: | ---: |
+| 1 | Hybrid | 51/57 | 89.5% | 29.68s | $0.0090 |
+| 2 | Luna | 51/57 | 89.5% | 44.57s | $0.0128 |
+| 3 | Jev Ultrafast | 19/51* | 37.3% | 1.07s | $0.0012 |
+| 4 | Jev Browser | 19/57 | 33.3% | 4.12s | $0.0018 |
+
+\* Jev Ultrafast was not measured on native desktop computer use, so its denominator is 51 rather than 57.
+
+## Per-lane snapshot
 
 | System | Simple browser | Longer browser | Native desktop | Cost / time note |
 | --- | ---: | ---: | ---: | --- |
@@ -56,4 +67,3 @@ The five apps/tasks were Spotify playback, TextEdit typing, Pages drafting, Keyn
 - Luna is slower and more expensive, but it can interpret the screen, type, recover from drift, and verify richer state.
 - Hybrid is the practical compromise in this run: try the cheap action path, verify the result, and spend Luna effort only when needed.
 - The Hybrid result is not a magical new model. It is a policy plus verification and fallback, and the real-world browser comparison used a staged recorded fallback rather than one uninterrupted live turn. That limitation is called out so the tie with Luna is not overstated.
-

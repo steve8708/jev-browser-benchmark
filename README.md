@@ -10,6 +10,19 @@ The short version:
 | Longer browser workflows | 0/10 (0%) | 1/9 (11.1%) separate public lane | **7/10 (70%)** | **7/10 (70%)** |
 | Native desktop tasks | 1/5 (20%) | not measured | **5/5 (100%)** | **5/5 (100%)** |
 
+## Overall aggregate
+
+The report's **Overall** view combines every measured task for each system. It ranks by success rate first, then estimated cost per successful task.
+
+| Rank | System | Successes | Rate | Average time | Cost per success |
+| ---: | --- | ---: | ---: | ---: | ---: |
+| 1 | Hybrid | 51/57 | 89.5% | 29.68s | $0.0090 |
+| 2 | Luna | 51/57 | 89.5% | 44.57s | $0.0128 |
+| 3 | Jev Ultrafast | 19/51* | 37.3% | 1.07s | $0.0012 |
+| 4 | Jev Browser | 19/57 | 33.3% | 4.12s | $0.0018 |
+
+\* Jev Ultrafast was not measured on native desktop computer use, so its denominator is 51 rather than 57.
+
 Hybrid ties Luna on the scored success rates while using fewer Luna actions on the tasks Jev can handle. In the simple lane it averaged 25.19 seconds and about $0.0069 per successful task, versus 32.49 seconds and about $0.0107 for Luna. Jev itself was much faster and cheaper, but its success rate fell sharply as tasks required interpretation, typing, verification, or recovery.
 
 ## What is in this repository
@@ -58,4 +71,3 @@ The complete local runner depends on private test accounts, local browser sessio
 ## Recording audit
 
 The local report links only to clips whose sampled frames were checked for the intended browser or desktop app. Several earlier long captures showed the wrong blank Chrome window for their entire duration; those links were removed from the report instead of being presented as evidence.
-

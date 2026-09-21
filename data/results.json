@@ -3,6 +3,15 @@
   "run_date": "2026-09-21",
   "systems": ["Jev Browser", "Jev Ultrafast", "Hybrid", "Luna"],
   "cost_note": "Costs are estimates or usage proxies from this run, not invoices. Local browser and desktop tooling is treated as $0.",
+  "overall": {
+    "definition": "All measured tasks for each system, ranked by success rate then estimated cost per successful task.",
+    "results": [
+      {"system": "Hybrid", "successes": 51, "total": 57, "rate": 0.895, "avg_seconds": 29.68, "cost_per_success_usd": 0.0090},
+      {"system": "Luna", "successes": 51, "total": 57, "rate": 0.895, "avg_seconds": 44.57, "cost_per_success_usd": 0.0128},
+      {"system": "Jev Ultrafast", "successes": 19, "total": 51, "rate": 0.373, "avg_seconds": 1.07, "cost_per_success_usd": 0.0012, "note": "Native desktop computer use was not measured."},
+      {"system": "Jev Browser", "successes": 19, "total": 57, "rate": 0.333, "avg_seconds": 4.12, "cost_per_success_usd": 0.0018}
+    ]
+  },
   "lanes": {
     "simple_browser": {
       "total": 42,
