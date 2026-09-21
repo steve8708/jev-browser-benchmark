@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jev browser benchmark</title>
+  <style>
+    :root { color-scheme: light; --bg:#f8f8f5; --panel:#fff; --ink:#111; --muted:#6d706b; --line:#d9d9d2; --blue:#2f63d8; --green:#3c8c62; --purple:#7658b8; --red:#c85757; }
+    [data-theme="dark"] { color-scheme: dark; --bg:#111315; --panel:#181b1f; --ink:#f4f4ef; --muted:#a4aaa4; --line:#3b403e; --blue:#83a8ff; --green:#76d19a; --purple:#b79af2; --red:#ff8585; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
+    main { max-width:1180px; margin:0 auto; padding:44px 24px 80px; }
+    header { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; border-bottom:1px solid var(--line); padding-bottom:28px; }
+    h1 { font-size:clamp(32px,5vw,64px); line-height:1; letter-spacing:-.06em; margin:0; max-width:760px; }
+    h2 { font-size:26px; letter-spacing:-.04em; margin:0 0 8px; }
+    h3 { margin:0 0 4px; font-size:18px; }
+    p { color:var(--muted); margin:8px 0; }
+    .eyebrow, th, .tag { text-transform:uppercase; letter-spacing:.1em; font-size:11px; font-weight:750; }
+    .eyebrow { color:var(--blue); margin:0 0 12px; }
+    button { border:1px solid var(--line); border-radius:999px; background:var(--panel); color:var(--ink); padding:9px 13px; cursor:pointer; font-weight:650; }
+    .hero { display:grid; grid-template-columns:1.25fr .75fr; gap:18px; margin-top:24px; }
+    .panel { background:var(--panel); border:1px solid var(--line); padding:22px; }
+    .takeaway { font-size:21px; line-height:1.25; letter-spacing:-.02em; color:var(--ink); }
+    .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:18px; }
+    .card { border-top:3px solid var(--blue); padding:14px 0 0; }
+    .card:nth-child(2){border-color:var(--purple)} .card:nth-child(3){border-color:var(--green)} .card:nth-child(4){border-color:var(--red)}
+    .card strong { display:block; font-size:28px; letter-spacing:-.04em; }
+    .card span { color:var(--muted); font-size:12px; }
+    .section { margin-top:52px; }
+    .section-head { display:flex; justify-content:space-between; gap:18px; align-items:end; border-bottom:1px solid var(--line); padding-bottom:10px; }
+    table { width:100%; border-collapse:collapse; table-layout:fixed; margin-top:12px; }
+    th, td { text-align:left; padding:13px 10px; border-bottom:1px solid var(--line); overflow-wrap:anywhere; }
+    th { color:var(--muted); }
+    td strong { font-size:17px; }
+    .rank { width:54px; color:var(--muted); }
+    .score { font-weight:800; white-space:nowrap; }
+    .bar { height:7px; background:var(--line); margin-top:7px; }
+    .bar i { display:block; height:100%; background:var(--green); }
+    .chart { position:relative; height:360px; border:1px solid var(--line); margin-top:16px; background:var(--panel); overflow:hidden; }
+    .chart:before { content:""; position:absolute; inset:20px 28px 48px 52px; background:repeating-linear-gradient(to top, transparent 0 calc(25% - 1px), var(--line) 25% 25.5%); opacity:.65; }
+    .axis-y,.axis-x { position:absolute; color:var(--muted); font-size:11px; }
+    .axis-y { left:8px; top:17px; bottom:44px; writing-mode:vertical-rl; transform:rotate(180deg); }
+    .axis-x { right:28px; bottom:10px; }
+    .point { position:absolute; width:14px; height:14px; border-radius:50%; transform:translate(-50%,50%); background:var(--blue); border:3px solid var(--panel); box-shadow:0 0 0 1px var(--blue); }
+    .point.hybrid { background:var(--purple); box-shadow:0 0 0 1px var(--purple); }
+    .point.luna { background:var(--green); box-shadow:0 0 0 1px var(--green); }
+    .point.jev { background:var(--red); box-shadow:0 0 0 1px var(--red); }
+    .point small { position:absolute; left:12px; bottom:9px; white-space:nowrap; color:var(--ink); font-size:11px; font-weight:750; }
+    .legend { display:flex; flex-wrap:wrap; gap:14px; margin-top:12px; color:var(--muted); font-size:12px; }
+    .legend span:before { content:""; display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--blue); margin-right:5px; }
+    .legend .hybrid:before { background:var(--purple) } .legend .luna:before { background:var(--green) } .legend .jev:before { background:var(--red) }
+    .note { border-left:3px solid var(--blue); padding:7px 0 7px 14px; margin-top:15px; }
+    code { color:var(--ink); }
+    @media (max-width:800px){ main{padding:28px 14px 60px}.hero{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,1fr)} header{align-items:flex-start}.section-head{display:block} table{font-size:13px} th,td{padding:10px 6px}.rank{width:30px}.chart{height:300px} }
+  </style>
+</head>
+<body>
+<main>
+  <header><div><p class="eyebrow">Jev browser and computer use</p><h1>Which system gets the task done?</h1><p>Success is the score. Cost and time explain the tradeoff.</p></div><button id="theme" type="button">Toggle dark mode</button></header>
+  <section class="hero">
+    <div class="panel"><p class="eyebrow">The result</p><p class="takeaway">Hybrid tied Luna on the scored success rates while being faster and cheaper in the simple browser lane.</p><p>Jev was dramatically faster, but its success rate dropped when a task required interpretation, typing, recovery, or verification.</p></div>
+    <div class="panel"><p class="eyebrow">How to read this</p><p><strong>Success</strong> comes first in ranking, then estimated cost per successful task. A fast failure is still a failure.</p><p>Costs are run estimates, not invoices.</p></div>
+  </section>
+  <div class="cards">
+    <div class="card"><span>Hybrid / simple</span><strong>39 / 42</strong><span>92.9% · $0.0069 / success</span></div>
+    <div class="card"><span>Luna / simple</span><strong>39 / 42</strong><span>92.9% · $0.0107 / success</span></div>
+    <div class="card"><span>Hybrid / native desktop</span><strong>5 / 5</strong><span>100% · about 36s average</span></div>
+    <div class="card"><span>Jev / simple</span><strong>18 / 42</strong><span>42.9% · 1.77s average</span></div>
+  </div>
+  <section class="section"><div class="section-head"><div><p class="eyebrow">Cost versus performance</p><h2>Higher is better. Left is cheaper.</h2></div><p>Cost per successful task, logarithmic x-axis</p></div><div class="chart" role="img" aria-label="Scatter plot of success rate versus estimated cost per successful task"><span class="axis-y">success rate</span><span class="axis-x">estimated cost per success: cheaper ←</span>
+    <span class="point jev" style="left:8%;bottom:42.9%"><small>Jev</small></span>
+    <span class="point jev" style="left:14%;bottom:42.9%"><small>Jev fast</small></span>
+    <span class="point hybrid" style="left:38%;bottom:92.9%"><small>Hybrid</small></span>
+    <span class="point luna" style="left:49%;bottom:92.9%"><small>Luna</small></span>
+    <span class="point hybrid" style="left:47%;bottom:70%"><small>Hybrid real</small></span>
+    <span class="point luna" style="left:58%;bottom:70%"><small>Luna real</small></span>
+  </div><div class="legend"><span class="hybrid">Hybrid</span><span class="luna">Luna</span><span class="jev">Jev</span></div></section>
+  <section class="section"><div class="section-head"><div><p class="eyebrow">All lanes</p><h2>One simple snapshot</h2></div><p>Same four approaches, three kinds of work</p></div><table><thead><tr><th class="rank">#</th><th>System</th><th>Simple browser</th><th>Longer browser</th><th>Native desktop</th><th>Time / cost</th></tr></thead><tbody>
+    <tr><td class="rank">1</td><td><strong>Hybrid</strong></td><td class="score">39/42 · 92.9%</td><td class="score">7/10 · 70%</td><td class="score">5/5 · 100%</td><td>25.19s / $0.0069 simple</td></tr>
+    <tr><td class="rank">2</td><td><strong>Luna</strong></td><td class="score">39/42 · 92.9%</td><td class="score">7/10 · 70%</td><td class="score">5/5 · 100%</td><td>32.49s / $0.0107 simple</td></tr>
+    <tr><td class="rank">3</td><td><strong>Jev Browser</strong></td><td class="score">18/42 · 42.9%</td><td class="score">0/10 · 0%</td><td class="score">1/5 · 20%</td><td>1.77s / $0.0003 simple</td></tr>
+    <tr><td class="rank">4</td><td><strong>Jev Ultrafast</strong></td><td class="score">18/42 · 42.9%</td><td class="score">1/9 · 11.1%*</td><td>not measured</td><td>0.77s / $0.0005 simple</td></tr>
+  </tbody></table><p class="note">* The Ultrafast longer-browser result is a separate public nine-flow lane. It is not the same fixture set as the ten-flow comparison.</p></section>
+  <section class="section"><div class="section-head"><div><p class="eyebrow">The three lanes</p><h2>What was tested</h2></div></div><table><thead><tr><th>Lane</th><th>Tasks</th><th>What it measures</th></tr></thead><tbody>
+    <tr><td><strong>Simple browser</strong></td><td>42 controlled tasks</td><td>Navigation, clicking, forms, scrolling, small edits, and state checks.</td></tr>
+    <tr><td><strong>Longer browser</strong></td><td>10 real-life-style workflows</td><td>Flights, restaurant reservation boundary, project tracker, Drive, Notion, Figma, mail, and app checkpoints. No irreversible purchase or send was submitted.</td></tr>
+    <tr><td><strong>Native desktop</strong></td><td>5 tasks</td><td>Spotify, TextEdit, Pages, Keynote, and Numbers. Real visual interaction and typing.</td></tr>
+  </tbody></table></section>
+  <section class="section"><div class="panel"><p class="eyebrow">Important limitation</p><h2>Browser tools are a separate check</h2><p>Page inspection, accessibility information, and JavaScript evaluation are normal browser-tool capabilities for an LLM integration. A deterministic probe reached 14/14, and a Jev-plus-replay experiment reached 42/42. Those are not model-controlled Luna scores, so they are not folded into the headline table.</p><p>See <a href="RESULTS.md">RESULTS.md</a> and <a href="data/results.json">data/results.json</a> for the methodology and machine-readable data.</p></div></section>
+</main>
+<script>
+  const root = document.documentElement;
+  const saved = localStorage.getItem('theme');
+  if (saved) root.dataset.theme = saved;
+  document.getElementById('theme').addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    localStorage.setItem('theme', next);
+  });
+</script>
+</body>
+</html>
